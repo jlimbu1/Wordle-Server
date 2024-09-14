@@ -31,7 +31,7 @@ export class GameController {
   // POST endpoint: {base_url}/Games/sessions
   // returns newly created session id
   @Post('/sessions')
-  createGame(@Body() word: string) {
+  createGame(@Body('word') word: string) {
     return this.GameService.createSession(word);
   }
 

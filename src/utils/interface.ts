@@ -6,6 +6,7 @@ export interface ISession {
   score: number;
   created_at: Date;
   updated_at: Date;
+  // TODO: store guesses
 }
 
 // scoring conditions

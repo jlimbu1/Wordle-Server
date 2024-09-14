@@ -17,9 +17,6 @@ export class GameService {
   }
 
   createSession(word: string = '') {
-    // return null if the given word is not valid
-    if (word && !this.isValidWord(word)) return null;
-
     // set word to user given word or a random word
     const index = word
       ? words.indexOf(word)
@@ -45,7 +42,7 @@ export class GameService {
 
   isValidWord(word: string) {
     // validate the word length
-    const length = word.split('').length;
+    const length = word?.split('')?.length;
     if (length !== WORD_LENGTH) return false;
 
     // TODO: other validation for word
