@@ -1,3 +1,8 @@
+// TODO: these should all be on a database instead
+import { ISession } from 'src/utils/interface';
+
+export const sessions: ISession[] = [];
+
 export const words = [
   'angle',
   'about',
