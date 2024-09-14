@@ -3,6 +3,9 @@ import { ISession } from 'src/utils/interface';
 import { sessions, words } from 'test/data';
 import { v4 as uuidv4 } from 'uuid';
 
+// word length for validation
+const WORD_LENGTH = 5;
+
 @Injectable()
 export class GameService {
   getAllWords() {
@@ -14,6 +17,9 @@ export class GameService {
   }
 
   createSession(word: string = '') {
+    // return null if the given word is not valid
+    if (word && !this.isValidWord(word)) return null;
+
     // set word to user given word or a random word
     const index = word
       ? words.indexOf(word)
@@ -35,5 +41,15 @@ export class GameService {
 
   removeSession(id: string) {
     // TODO: find by id and remove
+  }
+
+  isValidWord(word: string) {
+    // validate the word length
+    const length = word.split('').length;
+    if (length !== WORD_LENGTH) return false;
+
+    // TODO: other validation for word
+
+    return true;
   }
 }
