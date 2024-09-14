@@ -7,3 +7,10 @@ export interface ISession {
   created_at: Date;
   updated_at: Date;
 }
+
+// scoring conditions
+export enum Condition {
+  HIT = 'HIT',
+  PRESENT = 'PRESENT',
+  MISS = 'MISS',
+}

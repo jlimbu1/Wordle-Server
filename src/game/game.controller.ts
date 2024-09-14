@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { GameService } from './Game.service';
-import { ISession } from 'src/utils/interface';
+import { Condition, ISession } from 'src/utils/interface';
 
 // TODO: handle permissions (either admin or Game owner only)
 @Controller('Games')
@@ -33,5 +33,15 @@ export class GameController {
   @Post('/sessions')
   createGame(@Body() word: string) {
     return this.GameService.createSession(word);
+  }
+
+  // endpoint: {base_url}/Games/check/:id/:guess
+  // returns a session given id
+  @Get('/check/:id/:guess')
+  checkGuess(
+    @Param('id') id: string,
+    @Param('guess') guess: string,
+  ): Condition[] {
+    return this.GameService.checkGuess(id, guess);
   }
 }

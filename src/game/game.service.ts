@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ISession } from 'src/utils/interface';
+import { Condition, ISession } from 'src/utils/interface';
 import { sessions, words } from 'test/data';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -51,5 +51,34 @@ export class GameService {
     // TODO: other validation for word
 
     return true;
+  }
+
+  checkGuess(id: string, guess: string) {
+    if (!id || !guess) return null;
+
+    const word = sessions.find((x) => x.id === id).word;
+    const result = [];
+    const usedIndices = new Set();
+
+    // Check for hits first
+    for (let i = 0; i < guess.length; i++) {
+      if (guess[i] === word[i]) {
+        result.push(Condition.HIT);
+        usedIndices.add(i);
+      }
+    }
+
+    // Check for present
+    for (let i = 0; i < guess.length; i++) {
+      if (!usedIndices.has(i)) {
+        if (word.includes(guess[i])) {
+          result.push(Condition.PRESENT);
+        } else {
+          result.push(Condition.MISS);
+        }
+      }
+    }
+
+    return result;
   }
 }
