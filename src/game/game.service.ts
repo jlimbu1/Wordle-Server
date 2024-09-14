@@ -27,6 +27,7 @@ export class GameService {
       word: words[index],
       hasEnded: false,
       score: 0,
+      guesses: 0,
       created_at: new Date(),
       updated_at: new Date(),
     };
@@ -53,7 +54,8 @@ export class GameService {
   checkGuess(id: string, guess: string) {
     if (!id || !guess) return null;
 
-    const word = sessions.find((x) => x.id === id).word;
+    const session = sessions.find((x) => x.id === id);
+    const word = session.word;
     const result = [];
     const usedIndices = new Set();
 
@@ -75,6 +77,8 @@ export class GameService {
         }
       }
     }
+
+    ++session.guesses;
 
     return result;
   }

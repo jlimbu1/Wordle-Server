@@ -4,6 +4,7 @@ export interface ISession {
   word: string;
   hasEnded: boolean;
   score: number;
+  guesses: number;
   created_at: Date;
   updated_at: Date;
   // TODO: store guesses
