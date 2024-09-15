@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Condition, ISession } from 'src/utils/interface';
+import { Condition, ISession, status } from 'src/utils/interface';
 import { sessions, words } from 'test/data';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -16,7 +16,7 @@ export class GameService {
     return sessions;
   }
 
-  createSession(wordList: string[], word: string = '') {
+  createSession(wordList: string[], maxGuesses: number = 5, word: string = '') {
     // set word to user given word or a random word from the client side word list
     const index = word
       ? wordList.indexOf(word)
@@ -25,9 +25,10 @@ export class GameService {
     const newSession: ISession = {
       id: uuidv4(),
       word: wordList[index],
-      hasEnded: false,
+      status: status.PENDING,
       score: 0,
-      guesses: 0,
+      guesses: [],
+      maxGuesses,
       created_at: new Date(),
       updated_at: new Date(),
     };
@@ -55,31 +56,66 @@ export class GameService {
     if (!id || !guess) return null;
 
     const session = sessions.find((x) => x.id === id);
-    const word = session.word;
-    const result = [];
-    const usedIndices = new Set();
+    if (session.status !== status.PENDING) return null;
 
-    // Check for hits first
+    const word = session.word?.toLowerCase();
+    const lowerCaseGuess = guess?.toLowerCase();
+    const result = [];
+
     for (let i = 0; i < guess.length; i++) {
-      if (guess[i] === word[i]) {
-        result.push(Condition.HIT);
-        usedIndices.add(i);
-      }
+      if (lowerCaseGuess[i] === word[i]) result.push(Condition.HIT);
+      else if (word.includes(lowerCaseGuess[i])) result.push(Condition.PRESENT);
+      else result.push(Condition.MISS);
     }
 
-    // Check for present
-    for (let i = 0; i < guess.length; i++) {
-      if (!usedIndices.has(i)) {
-        if (word.includes(guess[i])) {
-          result.push(Condition.PRESENT);
-        } else {
-          result.push(Condition.MISS);
+    // add result to guesses list and calculate score
+    session.guesses.push(result);
+    session.score = this.calculateScore(session.guesses);
+
+    // update game session status
+    if (session.guesses.length >= session.maxGuesses)
+      session.status = status.LOSE;
+    if (result.every((item) => item === Condition.HIT))
+      session.status = status.WIN;
+
+    return {
+      result,
+      status: session.status,
+      score: session.score,
+      guesses: session.guesses.length,
+      answer: session.status === status.LOSE && session.word, // only provide the word when player loses
+    };
+  }
+
+  // get the highest point of each index
+  /*eg. if the guesses were
+    ["HIT", "MISS", "PRESENT", "MISS", "MISS"],
+    ["HIT", "MISS", "PRESENT", "MISS", "MISS"],
+    ["HIT", "MISS", "MISS", "HIT", "PRESENT"]
+
+    then the maximum awarded would be 14 (5 + 0 + 2 + 5 + 2) since,
+    ["HIT", "MISS", "PRESENT", "HIT", "PRESENT"]
+    would result in the maximum scores for each index
+  */
+  calculateScore(guesses) {
+    let totalScore = 0;
+    const points = {
+      HIT: 5,
+      PRESENT: 2,
+      MISS: 0,
+    };
+
+    for (let i = 0; i < guesses[0].length; i++) {
+      let maxScore = 0;
+      for (let j = 0; j < guesses.length; j++) {
+        let currentScore = points[guesses[j][i]];
+        if (currentScore > maxScore) {
+          maxScore = currentScore;
         }
       }
+      totalScore += maxScore;
     }
 
-    ++session.guesses;
-
-    return result;
+    return totalScore;
   }
 }

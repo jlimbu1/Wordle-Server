@@ -2,12 +2,18 @@
 export interface ISession {
   id: string;
   word: string;
-  hasEnded: boolean;
+  status: status;
   score: number;
-  guesses: number;
+  maxGuesses: number;
   created_at: Date;
   updated_at: Date;
-  // TODO: store guesses
+  guesses: Condition[][];
+}
+
+export enum status {
+  PENDING = 'PENDING',
+  WIN = 'WIN',
+  LOSE = 'LOSE',
 }
 
 // scoring conditions

@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { GameService } from './Game.service';
-import { Condition, ISession } from 'src/utils/interface';
+import { Condition, ISession, status } from 'src/utils/interface';
 
 // TODO: handle permissions (either admin or Game owner only)
 @Controller('Games')
@@ -32,8 +32,11 @@ export class GameController {
   // POST endpoint: {base_url}/Games/sessions
   // returns newly created session id
   @Post('/sessions')
-  createGame(@Body('wordList') wordList: string[], @Body('word') word: string) {
-    return this.GameService.createSession(wordList, word);
+  createGame(
+    @Body() payload: { wordList: string[]; word: string; maxGuesses: number },
+  ) {
+    const { wordList, word, maxGuesses } = payload;
+    return this.GameService.createSession(wordList, maxGuesses, word);
   }
 
   // endpoint: {base_url}/Games/check/:id/:guess
@@ -42,7 +45,7 @@ export class GameController {
   checkGuess(
     @Param('id') id: string,
     @Param('guess') guess: string,
-  ): Condition[] {
+  ): { result: Condition[]; status: status; score: number; answer?: string } {
     return this.GameService.checkGuess(id, guess);
   }
 }
