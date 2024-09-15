@@ -16,15 +16,15 @@ export class GameService {
     return sessions;
   }
 
-  createSession(word: string = '') {
-    // set word to user given word or a random word
+  createSession(wordList: string[], word: string = '') {
+    // set word to user given word or a random word from the client side word list
     const index = word
-      ? words.indexOf(word)
-      : Math.floor(Math.random() * words.length);
+      ? wordList.indexOf(word)
+      : Math.floor(Math.random() * wordList.length);
 
     const newSession: ISession = {
       id: uuidv4(),
-      word: words[index],
+      word: wordList[index],
       hasEnded: false,
       score: 0,
       guesses: 0,

@@ -7,6 +7,7 @@ import { Condition, ISession } from 'src/utils/interface';
 export class GameController {
   constructor(private readonly GameService: GameService) {}
 
+  // not used anymore since word list are stored on client side
   // endpoint: {base_url}/Games/words
   // returns all words
   @Get('/words')
@@ -31,8 +32,8 @@ export class GameController {
   // POST endpoint: {base_url}/Games/sessions
   // returns newly created session id
   @Post('/sessions')
-  createGame(@Body('word') word: string) {
-    return this.GameService.createSession(word);
+  createGame(@Body('wordList') wordList: string[], @Body('word') word: string) {
+    return this.GameService.createSession(wordList, word);
   }
 
   // endpoint: {base_url}/Games/check/:id/:guess
