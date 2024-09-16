@@ -22,11 +22,11 @@ export class GameController {
     return this.GameService.getAllSessions();
   }
 
-  // endpoint: {base_url}/Games/sessions/multiplayer
-  // returns all multiplayer sessions
-  @Get('/sessions/multiplayer')
-  getAllMultiPlayerSessions(): ISession[] {
-    return this.GameService.getAllMultiPlayerSessions();
+  // endpoint: {base_url}/Games/rooms
+  // returns all multiplayer rooms
+  @Get('/rooms')
+  getAllAvailableRooms(): string[] {
+    return this.GameService.getAllAvailableRooms();
   }
 
   // endpoint: {base_url}/Games/sessions/:id

@@ -16,8 +16,10 @@ export class GameService {
     return sessions;
   }
 
-  getAllMultiPlayerSessions() {
-    return sessions.filter((x) => x.isMultiplayer);
+  getAllAvailableRooms() {
+    return sessions
+      .filter((x) => x.isMultiplayer && x.status === status.PENDING)
+      .map((x) => x.id);
   }
 
   createSession(
