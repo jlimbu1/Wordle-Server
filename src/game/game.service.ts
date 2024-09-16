@@ -85,7 +85,10 @@ export class GameService {
     session.score = this.calculateScore(session.guesses);
 
     // update game session status
-    if (session.guesses.length >= session.maxGuesses)
+    if (
+      session.maxGuesses !== -1 && // -1 means unlimited guesses
+      session.guesses.length >= session.maxGuesses
+    )
       session.status = status.LOSE;
     if (result.every((item) => item === Condition.HIT))
       session.status = status.WIN;
