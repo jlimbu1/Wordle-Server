@@ -16,7 +16,16 @@ export class GameService {
     return sessions;
   }
 
-  createSession(wordList: string[], maxGuesses: number = 5, word: string = '') {
+  getAllMultiPlayerSessions() {
+    return sessions.filter((x) => x.isMultiplayer);
+  }
+
+  createSession(
+    wordList: string[],
+    isMultiplayer: boolean = false,
+    maxGuesses: number = 5,
+    word: string = '',
+  ) {
     // set word to user given word or a random word from the client side word list
     const index = word
       ? wordList.indexOf(word)
@@ -29,6 +38,7 @@ export class GameService {
       score: 0,
       guesses: [],
       maxGuesses,
+      isMultiplayer,
       created_at: new Date(),
       updated_at: new Date(),
     };

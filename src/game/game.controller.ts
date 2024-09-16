@@ -22,6 +22,13 @@ export class GameController {
     return this.GameService.getAllSessions();
   }
 
+  // endpoint: {base_url}/Games/sessions/multiplayer
+  // returns all multiplayer sessions
+  @Get('/sessions/multiplayer')
+  getAllMultiPlayerSessions(): ISession[] {
+    return this.GameService.getAllMultiPlayerSessions();
+  }
+
   // endpoint: {base_url}/Games/sessions/:id
   // returns a session given id
   @Get('/sessions/:id')
@@ -33,10 +40,21 @@ export class GameController {
   // returns newly created session id
   @Post('/sessions')
   createGame(
-    @Body() payload: { wordList: string[]; word: string; maxGuesses: number },
+    @Body()
+    payload: {
+      wordList: string[];
+      word: string;
+      maxGuesses: number;
+      isMultiplayer: boolean;
+    },
   ) {
-    const { wordList, word, maxGuesses } = payload;
-    return this.GameService.createSession(wordList, maxGuesses, word);
+    const { wordList, word, maxGuesses, isMultiplayer } = payload;
+    return this.GameService.createSession(
+      wordList,
+      isMultiplayer,
+      maxGuesses,
+      word,
+    );
   }
 
   // endpoint: {base_url}/Games/check/:id/:guess

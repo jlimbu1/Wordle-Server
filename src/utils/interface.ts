@@ -5,6 +5,7 @@ export interface ISession {
   status: status;
   score: number;
   maxGuesses: number;
+  isMultiplayer: boolean;
   created_at: Date;
   updated_at: Date;
   guesses: Condition[][];
