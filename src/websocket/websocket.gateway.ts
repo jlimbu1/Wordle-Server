@@ -1,5 +1,3 @@
-// websocket.gateway.ts
-
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -9,22 +7,25 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway()
-export class WebsocketGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+@WebSocketGateway({ cors: true })
+export class WebsocketGateway implements OnGatewayConnection {
   @WebSocketServer() server: Server;
 
+  private rooms = new Map<string, Set<Socket>>();
+
   handleConnection(client: Socket) {
-    console.log(`Client connected: ${client.id}`);
-  }
+    client.on('joinRoom', (room: string, user: string) => {
+      client.join(room);
+      if (!this.rooms.has(room)) {
+        this.rooms.set(room, new Set());
+        console.log(`${room}: ${user} has created a room`);
+      } else console.log(`${room}: ${user} has joined the room`);
+      this.rooms.get(room).add(client);
+    });
 
-  handleDisconnect(client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
-  }
-
-  @SubscribeMessage('message')
-  handleMessage(client: Socket, payload: any): void {
-    this.server.emit('message', payload);
+    client.on('guess', (room: string, guess: string, user: string) => {
+      console.log(`${room}: ${user} has guessed ${guess}`);
+      this.server.to(room).emit('guess', { user, guess });
+    });
   }
 }

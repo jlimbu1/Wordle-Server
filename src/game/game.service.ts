@@ -45,7 +45,7 @@ export class GameService {
       updated_at: new Date(),
     };
 
-    sessions.push(newSession);
+    sessions.unshift(newSession);
 
     return newSession.id;
   }
@@ -68,8 +68,6 @@ export class GameService {
     if (!id || !guess) return null;
 
     const session = sessions.find((x) => x.id === id);
-    if (session.status !== status.PENDING) return null;
-
     const word = session.word?.toLowerCase();
     const lowerCaseGuess = guess?.toLowerCase();
     const result = [];
