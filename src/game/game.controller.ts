@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post, Body } from '@nestjs/common';
-import { GameService } from './Game.service';
+import { GameService } from './game.service';
 import { Condition, ISession, status } from 'src/utils/interface';
 
 // TODO: handle permissions (either admin or Game owner only)
